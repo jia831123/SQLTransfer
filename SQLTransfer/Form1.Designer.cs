@@ -177,7 +177,6 @@
             this.ServerName_Source.Name = "ServerName_Source";
             this.ServerName_Source.Size = new System.Drawing.Size(324, 30);
             this.ServerName_Source.TabIndex = 4;
-            this.ServerName_Source.Text = "210.201.85.214";
             // 
             // UserName_Source
             // 
@@ -193,7 +192,6 @@
             this.Password_Source.Name = "Password_Source";
             this.Password_Source.Size = new System.Drawing.Size(324, 28);
             this.Password_Source.TabIndex = 6;
-            this.Password_Source.Text = "MyGis@";
             // 
             // DataBase_Source
             // 
@@ -320,7 +318,6 @@
             this.ServerName_Traget.Name = "ServerName_Traget";
             this.ServerName_Traget.Size = new System.Drawing.Size(324, 30);
             this.ServerName_Traget.TabIndex = 8;
-            this.ServerName_Traget.Text = "210.201.85.214";
             // 
             // UserName_Traget
             // 
@@ -336,7 +333,6 @@
             this.Password_Traget.Name = "Password_Traget";
             this.Password_Traget.Size = new System.Drawing.Size(324, 28);
             this.Password_Traget.TabIndex = 10;
-            this.Password_Traget.Text = "MyGis@";
             // 
             // DataBase_Traget
             // 
