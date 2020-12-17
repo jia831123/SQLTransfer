@@ -196,13 +196,15 @@ namespace SQLTransfer
 
         private void button3_Click(object sender, EventArgs e)
         {
+            DateTime stratTime = DateTime.Now;
+            int dataCounts;
             try
             {
                 //Step1.從SQL_Source將資料全部取下來
                 using (clsDB db = new clsDB(_sourceSqlService.SQLConnectingString))
                 {
                     _sourceSqlService.Data = db.ToDataTable(_sourceSqlService.SQLSelectAllString);
-
+                    dataCounts = _sourceSqlService.Data.Rows.Count;
                 }
                 //Step2.將SQL_Traget表資料刪除
                 using (clsDB db = new clsDB(_tragetSqlService.SQLConnectingString))
@@ -213,14 +215,23 @@ namespace SQLTransfer
                 using (var sql = new SqlConnection(_tragetSqlService.SQLConnectingString))
                 {
                     sql.Open();
+           
                     using (var sqlBulkCopy = new SqlBulkCopy(sql))
                     {
+                        if (dataCounts > 10000) 
+                        {
+                            sqlBulkCopy.BatchSize = 10000;
+                            sqlBulkCopy.BulkCopyTimeout = 300;
+                        }
                         sqlBulkCopy.DestinationTableName = _tragetSqlService.TableName;
                         sqlBulkCopy.WriteToServer(_sourceSqlService.Data);
                     }
                     sql.Close();
                 }
-                MessageBox.Show("Success!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DateTime stopTime = DateTime.Now;
+                TimeSpan span = stopTime.Subtract(stratTime);
+                var minScond = span.TotalSeconds.ToString();
+                MessageBox.Show($"Success! {dataCounts} rows of data were transfered AND Takes {minScond} seconds", "Infomation", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex) 
             {
@@ -293,7 +304,7 @@ namespace SQLTransfer
 
         private void Info_Click_1(object sender, EventArgs e)
         {
-            MessageBox.Show("By Peter 2020", "Info", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            MessageBox.Show("By Peter 2020", "Infomation", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
         }
     }
 }
