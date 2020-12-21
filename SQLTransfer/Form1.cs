@@ -28,23 +28,32 @@ namespace SQLTransfer
 
             if (ConfigurationManager.AppSettings["serRemember"].Equals("true")) 
             {
+                Configuration cfa = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                
+                //MessageBox.Show(
+                ////    "Remember:" + cfa.AppSettings.Settings["serRemember"].Value.ToString() + 
+                ////    ";ServerName:" + cfa.AppSettings.Settings["serName"].Value.ToString()+
+                ////    ";UserName:" + cfa.AppSettings.Settings["serUName"].Value.ToString()+
+                ////    ";PassWord:" + cfa.AppSettings.Settings["serPWord"].Value.ToString()
+                ////    );
+                ////MessageBox.Show(
+                ////   "fuck"
+                ////    );
+                ServerName_Source.Text =_sourceSqlService.ServerName = cfa.AppSettings.Settings["serName"].Value.ToString();
+                UserName_Source.Text = _sourceSqlService.UserName   = cfa.AppSettings.Settings["serUName"].Value.ToString();
+                Password_Source.Text =_sourceSqlService.Password   = cfa.AppSettings.Settings["serPWord"].Value.ToString();
                 SaveInputData_Source.Checked = true;
-                _sourceSqlService.ServerName = ConfigurationManager.AppSettings["serName"].ToString();
-                _sourceSqlService.UserName = ConfigurationManager.AppSettings["serUName"].ToString();
-                _sourceSqlService.Password = ConfigurationManager.AppSettings["serPWord"].ToString();
-                ServerName_Source.Text = _sourceSqlService.ServerName;
-                ServerName_Source.Text = _sourceSqlService.UserName;
-                ServerName_Source.Text = _sourceSqlService.Password;
             }
             if (ConfigurationManager.AppSettings["traRemember"].Equals("true"))
             {
-                SaveInputData_Traget.Checked = true;
-                _tragetSqlService.ServerName = ConfigurationManager.AppSettings["traName"].ToString();
-                _tragetSqlService.UserName = ConfigurationManager.AppSettings["traUName"].ToString();
-                _tragetSqlService.Password = ConfigurationManager.AppSettings["traPWord"].ToString();
+                
+                _tragetSqlService.ServerName = ConfigurationManager.AppSettings["traName"];
+                _tragetSqlService.UserName = ConfigurationManager.AppSettings["traUName"] ;
+                _tragetSqlService.Password = ConfigurationManager.AppSettings["traPWord"] ;
                 ServerName_Traget.Text = _tragetSqlService.ServerName;
-                ServerName_Traget.Text = _tragetSqlService.UserName;
-                ServerName_Traget.Text = _tragetSqlService.Password;
+                UserName_Traget.Text = _tragetSqlService.UserName;
+                Password_Traget.Text = _tragetSqlService.Password;
+                SaveInputData_Traget.Checked = true;
             }
         }
 
@@ -264,40 +273,54 @@ namespace SQLTransfer
         private void SaveInputData(object sender, EventArgs e) 
         {
             CheckBox _sender = sender as CheckBox;
+            Configuration config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
             if (_sender.Checked)
             {
                 if (_sender.Name == "SaveInputData_Source")
                 {
-                    ConfigurationManager.AppSettings["serName"] = _sourceSqlService.ServerName;
-                    ConfigurationManager.AppSettings["serUName"] = _sourceSqlService.UserName;
-                    ConfigurationManager.AppSettings["serPWord"] = _sourceSqlService.Password;
-                    ConfigurationManager.AppSettings["serRemember"] = "true";
+                    config.AppSettings.Settings["serName"].Value = ServerName_Source.Text;
+                    config.AppSettings.Settings["serUName"].Value = UserName_Source.Text.ToString();
+                    config.AppSettings.Settings["serPWord"].Value = Password_Source.Text.ToString();
+
+
+                    config.AppSettings.Settings["serRemember"].Value= "true";
                 }
                 else
                 {
-                    ConfigurationManager.AppSettings["traName"] = _tragetSqlService.ServerName;
-                    ConfigurationManager.AppSettings["traUName"] = _tragetSqlService.UserName;
-                    ConfigurationManager.AppSettings["traRemember"] = "false";
+                    config.AppSettings.Settings["traName"].Value = ServerName_Traget.Text;
+                    config.AppSettings.Settings["traUName"].Value = UserName_Traget.Text;
+                    config.AppSettings.Settings["traPWord"].Value = Password_Traget.Text;
+                    config.AppSettings.Settings["traRemember"].Value = "true";
+
+
                 }
             }
             else 
             {
                 if (_sender.Name == "SaveInputData_Source")
                 {
-                    ConfigurationManager.AppSettings["serName"] = "";
-                    ConfigurationManager.AppSettings["serUName"] ="";
-                    ConfigurationManager.AppSettings["serPWord"] = "";
-                    ConfigurationManager.AppSettings["serRemember"] = "false";
+                    config.AppSettings.Settings["serName"].Value = "";
+                    config.AppSettings.Settings["serUName"].Value = "";
+                    config.AppSettings.Settings["serPWord"].Value = "";
+                    config.AppSettings.Settings["serRemember"].Value = "false";
                 }
                 else
                 {
-                    ConfigurationManager.AppSettings["traName"] = "";
-                    ConfigurationManager.AppSettings["traUName"] = "";
-                    ConfigurationManager.AppSettings["traRemember"] = "false";
+                    config.AppSettings.Settings["traName"].Value = "";
+                    config.AppSettings.Settings["traUName"].Value = "";
+                    config.AppSettings.Settings["traPWord"].Value = "";
+                    config.AppSettings.Settings["traRemember"].Value = "false";
                 }
-
             }
-
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
+            //MessageBox.Show(
+            //          "Remember:" + ConfigurationManager.AppSettings["serRemember"].ToString() +
+            //          ";ServerName:" + ConfigurationManager.AppSettings["serName"].ToString() +
+            //          ";UserName:" + ConfigurationManager.AppSettings["serUName"].ToString() +
+            //          ";PassWord:" + ConfigurationManager.AppSettings["serPWord"].ToString()
+            //          );
         }
 
 

@@ -115,7 +115,7 @@ namespace SQLTransfer.Models
         {
             get
             {
-                string r = $"DELETE FROM  {TableName}";
+                string r = $"TRUNCATE TABLE  {TableName}";
                 return r;
             }
         }
