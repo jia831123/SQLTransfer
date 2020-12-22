@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -95,20 +96,26 @@ namespace SQLTransfer
             if (_sqlService.ServerName != ".")
             {
                 PingReply reply = null;
-                try
+                string pattern = @"((25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}";
+                bool regex = Regex.IsMatch(_sqlService.ServerName, pattern);
+                if (regex) 
                 {
-                    reply = pingSender.Send(_sqlService.ServerName, 120);
+                    try
+                    {
+                        reply = pingSender.Send(_sqlService.ServerName, 120);
+                    }
+                    catch
+                    {
+                        DialogResult dr = MessageBox.Show("IP位置無效", "提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    if (reply.Status != IPStatus.Success)
+                    {
+                        DialogResult dr = MessageBox.Show("IP位置錯誤", "提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
-                catch
-                {
-                    DialogResult dr = MessageBox.Show("IP位置無效", "提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                if (reply.Status != IPStatus.Success)
-                {
-                    DialogResult dr = MessageBox.Show("IP位置錯誤", "提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+
             }
             try 
             {
@@ -190,16 +197,49 @@ namespace SQLTransfer
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.CheckState != CheckState.Checked)
+            CheckBox _sender = sender as CheckBox;
+            TextBox userNameTextBox = _sender.Name == "WindowsAuCheckBox_Source" ? UserName_Source : UserName_Traget;
+            TextBox passWordTextBox = _sender.Name == "WindowsAuCheckBox_Source" ? Password_Source : Password_Traget;
+            SqlService sqlService = null;
+
+            //這樣不行
+            //sqlService = _sender.Name == "WindowsAuCheckBox_Source" ? _sourceSqlService : _tragetSqlService;
+            //這樣卻可以@@
+            if (_sender.Name == "WindowsAuCheckBox_Source")
             {
-                UserName_Source.Enabled = true;
-                Password_Source.Enabled = true;
-                _sourceSqlService.IsAuthentica = true;
+                sqlService = _sourceSqlService;
             }
-            else {
-                UserName_Source.Enabled = !true;
-                Password_Source.Enabled = !true;
+            else
+            {
+                sqlService = _tragetSqlService;
             }
+            if (_sender.Checked == true) 
+            {
+                userNameTextBox.Enabled = false;
+                passWordTextBox.Enabled = false;
+                sqlService.IsAuthentica = true;
+            } else
+            {
+                userNameTextBox.Enabled = true;
+                passWordTextBox.Enabled = true;
+                sqlService.IsAuthentica = false;
+            }
+
+
+
+            //if (_sender.Name== "WindowsAuCheckBox_Source")
+            //{
+            //    sqlService = _sourceSqlService;
+            //    if (_sender.Checked == true) { } else { }
+            //    UserName_Source.Enabled = true;
+            //    Password_Source.Enabled = true;
+            //    _sourceSqlService.IsAuthentica = true;
+            //}
+            //else {
+            //    sqlService = _tragetSqlService;
+            //    UserName_Source.Enabled = !true;
+            //    Password_Source.Enabled = !true;
+            //}
 
         }
 
@@ -218,7 +258,7 @@ namespace SQLTransfer
                 //Step2.將SQL_Traget表資料刪除
                 using (clsDB db = new clsDB(_tragetSqlService.SQLConnectingString))
                 {
-                    db.ToExecute(_tragetSqlService.DeleteSQLString);
+                    db.ToExecute(_tragetSqlService.getDeleteStrig());
                 }
                 //Step3.將資料Inser進SQL_Traget
                 using (var sql = new SqlConnection(_tragetSqlService.SQLConnectingString))

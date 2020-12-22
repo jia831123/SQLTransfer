@@ -9,15 +9,16 @@ namespace SQLTransfer.Models
 {
      interface ISqlService
     {
+        string getDeleteStrig();
 
     }
-      class SqlService
+      class SqlService: ISqlService
     {
         private string _serverName; 
         private string _userName;
         private string _password;
-        private string _dataBase;
-        private string _tableName="master";
+        private string _dataBase = "master";
+        private string _tableName;
         public string ServerName { get { return _serverName; } set { _serverName = value.Trim(); } }
         public string UserName { get { return _userName; } set { _userName = value.Trim(); } }
         public string Password { get { return _password; } set { _password = value.Trim(); } }
@@ -103,21 +104,27 @@ namespace SQLTransfer.Models
         public List<string> DataBaseList { get; set; }
         public DataTable TableInfo { get; set; }
         public DataTable Data { get; set; }
+
+        public virtual string getDeleteStrig()
+        {
+            throw new NotImplementedException();
+        }
     }
     class SourceSqlService : SqlService
     {
-    
+        public override string getDeleteStrig()
+        {
+            throw new Exception("來源資料庫不可執行刪除動作!");
+        }
+
     }
 
     class TragetSqlService : SqlService
     {
-        public string DeleteSQLString
+        public override string getDeleteStrig()
         {
-            get
-            {
-                string r = $"TRUNCATE TABLE  {TableName}";
-                return r;
-            }
+            string r = $"TRUNCATE TABLE  {TableName}";
+            return r;
         }
 
     }

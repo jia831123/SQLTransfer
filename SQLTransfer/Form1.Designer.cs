@@ -51,7 +51,7 @@
             this.SaveInputData_Source = new System.Windows.Forms.CheckBox();
             this.TableName_Source = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.WindowsAuCheckBox_Source = new System.Windows.Forms.CheckBox();
             this.DataBase_Source = new System.Windows.Forms.ComboBox();
             this.Password_Source = new System.Windows.Forms.TextBox();
             this.UserName_Source = new System.Windows.Forms.TextBox();
@@ -173,6 +173,7 @@
             this.checkBox2.TabIndex = 12;
             this.checkBox2.Text = "Windows Authentica";
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // DataBase_Traget
             // 
@@ -256,7 +257,7 @@
             this.tabPage3.Controls.Add(this.SaveInputData_Source);
             this.tabPage3.Controls.Add(this.TableName_Source);
             this.tabPage3.Controls.Add(this.label9);
-            this.tabPage3.Controls.Add(this.checkBox1);
+            this.tabPage3.Controls.Add(this.WindowsAuCheckBox_Source);
             this.tabPage3.Controls.Add(this.DataBase_Source);
             this.tabPage3.Controls.Add(this.Password_Source);
             this.tabPage3.Controls.Add(this.UserName_Source);
@@ -303,16 +304,16 @@
             this.label9.TabIndex = 10;
             this.label9.Text = "TableName";
             // 
-            // checkBox1
+            // WindowsAuCheckBox_Source
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(462, 48);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(164, 26);
-            this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "Windows Authentica";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.WindowsAuCheckBox_Source.AutoSize = true;
+            this.WindowsAuCheckBox_Source.Location = new System.Drawing.Point(462, 48);
+            this.WindowsAuCheckBox_Source.Name = "WindowsAuCheckBox_Source";
+            this.WindowsAuCheckBox_Source.Size = new System.Drawing.Size(164, 26);
+            this.WindowsAuCheckBox_Source.TabIndex = 9;
+            this.WindowsAuCheckBox_Source.Text = "Windows Authentica";
+            this.WindowsAuCheckBox_Source.UseVisualStyleBackColor = true;
+            this.WindowsAuCheckBox_Source.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // DataBase_Source
             // 
@@ -451,7 +452,7 @@
         private System.Windows.Forms.CheckBox SaveInputData_Source;
         private System.Windows.Forms.ComboBox TableName_Source;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox WindowsAuCheckBox_Source;
         private System.Windows.Forms.ComboBox DataBase_Source;
         private System.Windows.Forms.TextBox Password_Source;
         private System.Windows.Forms.TextBox UserName_Source;
