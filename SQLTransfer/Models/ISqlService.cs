@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace SQLTransfer.Models
 {
-     interface ISqlService
+    interface ISqlService
     {
-        string getDeleteStrig();
+
+        string GetSQLDeleteStrig();
+        string GetSQLConnectedString();
+        string GetSQLSelectAllString();
+        string GetSQLTableInfoString();
 
     }
-      class SqlService: ISqlService
+    class SqlService : ISqlService
     {
-        private string _serverName; 
+        private string _serverName;
         private string _userName;
         private string _password;
         private string _dataBase = "master";
@@ -24,59 +28,20 @@ namespace SQLTransfer.Models
         public string Password { get { return _password; } set { _password = value.Trim(); } }
         public string DataBase { get { return _dataBase; } set { _dataBase = value.Trim(); } }
         public string TableName { get { return _tableName; } set { _tableName = value.Trim(); } }
-        public string SQLConnectingString 
-        {
-            get 
-            {
-                string r;
-                if (IsAuthentica)
-                {
-                    r = $"" +
-                    $"Data Source={ServerName};" +
-                    $"DataBase={_dataBase};" +
-                    $"integrated security=true; ";
-                   
-                }
-                else 
-                {
-                    r = $"" +
-                    $"Data Source={ServerName};" +
-                    $"DataBase={_dataBase};" +
-                    $"User Id={UserName};" +
-                    $"Password={Password};";
-                }
-                return r;
-            }
-        }
-        public string SQLSelectAllString 
-        { get 
-            {
-                string r = $"SELECT * FROM {TableName}";
-                return r;
-            } 
-        
-        }
-        public string SQLTableInfoString
+        public bool IsAuthentica { get; set; } = false;
+        public bool IsSqlConnectinfoComplete
         {
             get
-            {
-                return "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME";
-            }
-
-        }
-        public bool IsAuthentica { get; set; } = false;
-        public bool IsSqlConnectinfoComplete 
-        {
-            get 
             {
                 if (IsAuthentica)
                 {
                     if (
                         string.IsNullOrWhiteSpace(ServerName) ||
-                        string.IsNullOrWhiteSpace(DataBase) 
+                        string.IsNullOrWhiteSpace(DataBase)
                         ) { return false; }
                 }
-                else {
+                else
+                {
                     if (
                         string.IsNullOrWhiteSpace(ServerName) ||
                         string.IsNullOrWhiteSpace(UserName) ||
@@ -86,7 +51,7 @@ namespace SQLTransfer.Models
                 return true;
             }
         }
-        public bool IsSqlTransferComplete 
+        public bool IsSqlTransferComplete
         {
             get
             {
@@ -105,27 +70,83 @@ namespace SQLTransfer.Models
         public DataTable TableInfo { get; set; }
         public DataTable Data { get; set; }
 
-        public virtual string getDeleteStrig()
+        public string GetSQLConnectedString()
+        {
+
+            string r;
+            if (IsAuthentica)
+            {
+                r = $"" +
+                $"Data Source={ServerName};" +
+                $"DataBase={_dataBase};" +
+                $"integrated security=true; ";
+
+            }
+            else
+            {
+                r = $"" +
+                $"Data Source={ServerName};" +
+                $"DataBase={_dataBase};" +
+                $"User Id={UserName};" +
+                $"Password={Password};";
+            }
+            return r;
+
+        }
+        public string GetSQLSelectAllString()
+        {
+            string r = $"SELECT * FROM {TableName}";
+            return r;
+
+
+        }
+        public string GetSQLTableInfoString()
+        {
+
+            return "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME";
+
+
+        }
+        public virtual string GetSQLDeleteStrig()
         {
             throw new NotImplementedException();
         }
+
     }
     class SourceSqlService : SqlService
     {
-        public override string getDeleteStrig()
+        public override string GetSQLDeleteStrig()
         {
-            throw new Exception("來源資料庫不可執行刪除動作!");
+            throw new Exception("錯誤!來源資料庫不可執行刪除動作!");
         }
 
     }
 
-    class TragetSqlService : SqlService
+    class TargetSqlService : SqlService
     {
-        public override string getDeleteStrig()
+        public override string GetSQLDeleteStrig()
         {
-            string r = $"TRUNCATE TABLE  {TableName}";
-            return r;
+            return $"TRUNCATE TABLE  {TableName}";
         }
 
+    }
+
+    abstract class Creator
+    {
+        public abstract ISqlService CreateSqlService();
+    }
+    class SourceCreator : Creator
+    {
+        public override ISqlService CreateSqlService()
+        {
+            return new SourceSqlService();
+        }
+    }
+    class TargetCreator : Creator
+    {
+        public override ISqlService CreateSqlService()
+        {
+            return new TargetSqlService();
+        }
     }
 }
